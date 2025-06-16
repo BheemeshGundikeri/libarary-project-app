@@ -7,7 +7,7 @@ import UserPortal from './Components/Users/UserPortal';
 const App = () => {
   return (
     <>
-      <BrowserRouter>
+      <BrowserRouter  basename="/libarary-project-app">
         <Routes>
           <Route element={<LandingPage/>} path='/'/>
           <Route element={<AdminPortal/>} path='/adminportal/*'/>
