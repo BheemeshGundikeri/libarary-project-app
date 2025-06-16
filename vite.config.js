@@ -3,6 +3,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/libarary-project-app/',  // important: leading + trailing '/'
+  base: './',  // important: leading + trailing '/'
   plugins: [react()],
 })

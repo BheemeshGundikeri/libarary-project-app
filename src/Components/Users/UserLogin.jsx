@@ -12,7 +12,7 @@ const UserLogin = () => {
       let pswdVal = adminform.current[1].value
 
       let adminCredintial = {
-          admin : "bheemesh.gundikeri24@gmail.com",
+          admin : "user",
           password : "12345"
       }
 
@@ -29,8 +29,8 @@ const UserLogin = () => {
     <>
        <div className="user_login">
             <form ref={adminform} onSubmit={handleAdminform}>
-                <input type="username"  placeholder='Enter Email' />
-                <input type="password" placeholder='Enter password' />
+                <input type="username"  placeholder='Enter Email' value="admin" />
+                <input type="password" placeholder='Enter password' value="12345"/>
 
                 <button>User Login</button>
             </form>
