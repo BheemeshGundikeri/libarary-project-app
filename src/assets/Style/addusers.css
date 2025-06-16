@@ -1,0 +1,9 @@
+.page-background {
+    min-height: 90vh;
+    background: linear-gradient(to right, #2b5876, #4e4376);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 20px;
+  }
+  

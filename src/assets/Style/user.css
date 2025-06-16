@@ -1,0 +1,10 @@
+.bg-gradient-custom {
+    background: linear-gradient(to right, #2b5876, #4e4376);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+
+  }
+  
