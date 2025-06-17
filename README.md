@@ -1,7 +1,8 @@
 <<<<<<< HEAD
 # React + Vite
 https://BheemeshGundikeri.github.io/libarary-project-app
-https://BheemeshGundikeri.github.io/libarary-project-app
+## 🚀 [Run the Application](https://BheemeshGundikeri.github.io/libarary-project-app)
+
 
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
