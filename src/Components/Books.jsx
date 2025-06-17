@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import '../assets/Style/books.css';
 import { useLocation, useNavigate } from "react-router-dom";
-// import Cart from "./Users/Cart";
 
 const Books = ({ cart, setCart }) => {
   const [books, setBooks] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // 👈 Search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 8;
+
   const navigate = useNavigate();
   const loc = useLocation();
   const bool = loc.pathname.startsWith("/adminportal");
@@ -59,24 +61,27 @@ const Books = ({ cart, setCart }) => {
     }
   };
 
-  // const removeFromCart = (id) => {
-  //   const updatedCart = cart.filter((item) => item.id !== id);
-  //   setCart(updatedCart);
-  // };
-
-  // 👇 Filter books based on searchTerm
+  // Search filter logic
   const filteredBooks = books.filter((book) => {
-  const titleMatch = book.title?.toLowerCase().includes(searchTerm.toLowerCase());
-  const authorMatch = book.authors?.some((author) =>
-    author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const categoryMatch = Array.isArray(book.categories) && book.categories.some((cat) =>
-    cat.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    const titleMatch = book.title?.toLowerCase().includes(searchTerm.toLowerCase());
+    const authorMatch = book.authors?.some((author) =>
+      author.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    const categoryMatch = Array.isArray(book.categories) && book.categories.some((cat) =>
+      cat.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return titleMatch || authorMatch || categoryMatch;
+  });
 
-  return titleMatch || authorMatch || categoryMatch;
-});
+  // Pagination logic
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
 
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <>
@@ -85,20 +90,21 @@ const Books = ({ cart, setCart }) => {
           <div className="text-center mb-4">
             <h1 className="fw-bold display-5 text-light">📚 Our Library</h1>
             <p className="text-white-50">Explore a wide range of books, authors, and genres</p>
-
-            {/* 🔍 Search Input */}
             <input
               type="text"
               placeholder="Search books by title, author or category..."
               className="form-control mt-3 w-50 mx-auto"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); // Reset to first page on search
+              }}
             />
           </div>
 
           <div className="row g-4">
-            {filteredBooks.length > 0 ? (
-              filteredBooks.map((book) => {
+            {currentBooks.length > 0 ? (
+              currentBooks.map((book) => {
                 const { id, title, isbn, pageCount, thumbnailUrl, status, authors, categories } = book;
                 return (
                   <div className="col-md-6 col-lg-4 col-xl-3" key={id}>
@@ -145,17 +151,68 @@ const Books = ({ cart, setCart }) => {
               <div className="text-center text-white">No books found.</div>
             )}
           </div>
+
+          {/* Ellipsis Pagination */}
+          {totalPages > 1 && (
+            <nav className="d-flex justify-content-center mt-4">
+              <ul className="pagination">
+
+                {/* Prev Button */}
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => goToPage(currentPage - 1)}>
+                    &laquo; Prev
+                  </button>
+                </li>
+
+                {/* Always show first page */}
+                {currentPage > 3 && (
+                  <>
+                    <li className="page-item">
+                      <button className="page-link" onClick={() => goToPage(1)}>1</button>
+                    </li>
+                    {currentPage > 4 && (
+                      <li className="page-item disabled"><span className="page-link">...</span></li>
+                    )}
+                  </>
+                )}
+
+                {/* Middle Page Numbers */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((pageNum) =>
+                    pageNum === currentPage ||
+                    pageNum === currentPage - 1 ||
+                    pageNum === currentPage + 1
+                  )
+                  .map((pageNum) => (
+                    <li key={pageNum} className={`page-item ${currentPage === pageNum ? "active" : ""}`}>
+                      <button className="page-link" onClick={() => goToPage(pageNum)}>{pageNum}</button>
+                    </li>
+                  ))}
+
+                {/* Always show last page */}
+                {currentPage < totalPages - 2 && (
+                  <>
+                    {currentPage < totalPages - 3 && (
+                      <li className="page-item disabled"><span className="page-link">...</span></li>
+                    )}
+                    <li className="page-item">
+                      <button className="page-link" onClick={() => goToPage(totalPages)}>{totalPages}</button>
+                    </li>
+                  </>
+                )}
+
+                {/* Next Button */}
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => goToPage(currentPage + 1)}>
+                    Next &raquo;
+                  </button>
+                </li>
+
+              </ul>
+            </nav>
+          )}
         </div>
       </div>
-{/* 
-      {!bool && (
-      <div className="text-center mt-4">
-        <button className="btn btn-warning" onClick={() => navigate("/UserPortal/cart")}>
-          Go to Cart
-        </button>
-      </div>
-    )} */}
-
     </>
   );
 };
